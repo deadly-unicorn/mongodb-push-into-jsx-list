@@ -5,7 +5,7 @@ export default function Loader(){
 
     <>
       <div>
-        hello world
+        content is loading...
       </div>
     </>
 

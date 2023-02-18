@@ -9,28 +9,40 @@ const client = new MongoClient(uri);
 
 
 
-let tempData;
-const listData:any[]=[];
+
+
+interface listData{
+  fetchedData:any[]
+}
+
+const listData:listData ={
+  fetchedData:[]
+};
+
 
 const getGenres = async () => {
   try{
     await client.connect()
     .then(()=>{console.log(`Sucessfully connected`)})
-    .then(()=>{return client.db('sample_mflix').collection('movies').distinct("genres")})
-    .then(data=>{
-      tempData=(data);
-      tempData.forEach(element=>{listData.push(<li>{JSON.stringify(element)}</li>)});
-
-    })
-    
+    await client.db('deadly_testing').collection('newCollection').aggregate([{$match:{age:{$gt:20}}},{$project:{name:1,_id:0,age:1}}])
+    .forEach(element=>{listData.fetchedData.push(element)})
   }
   catch (error){
     console.error(`Failed because of ${error}`)
   }
-  finally{client.close()}
+  finally{await client.close()}
 }
+const jsxArray:any[]=[]
 
-getGenres();
+getGenres().then(()=>{
+  {listData.fetchedData.forEach(
+    (element,index)=>{
+      jsxArray.push(<li key={index} className="list-inside">{JSON.stringify(element)}</li>)
+    }
+    )
+  }
+})
+
 
 
 
@@ -39,17 +51,16 @@ export default function FetchedData(){
 
       return(
         <>
-        <div className="max-w-sm flex flex-col h-fit border overflow-hidden">
-          <span>genre list</span>
+        <div className="max-w-sm flex flex-col h-fit border overflow-hidden text-center">
+          <span>Found:</span>
         <div></div>
           <br/>
           <br/>
           <div className="pl-2">
-            <ul className="list-disc" >
-              <li>hey</li>
-              {listData}
+            <ol className="list-decimal" >
+              {jsxArray}              
 
-            </ul>
+            </ol>
           </div>
         </div>
         </>
